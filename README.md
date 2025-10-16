@@ -1,8 +1,8 @@
 # 👋 Hello, I'm Tanjil Hasan!
 
-![Banner](https://files.catbox.moe/egw7cj.jpg)
+![Banner](https://i.ibb.co/0RsQCX8v/received-1848769335994184.jpg)
 
-I'm a curious and tech-enthusiastic individual, currently focused on learning new skills every day. I dream of making it big someday and becoming someone truly valuable in life.
+
 
 ---
 
@@ -18,19 +18,14 @@ I'm a curious and tech-enthusiastic individual, currently focused on learning ne
 
 ## 📫 Connect With Me
 
-- 🧵 Facebook: [〲TOM 卝 হাসানヅ࿐](https://www.facebook.com/share/12Ke3rerJgs/)
-- 📱 WhatsApp: +8801XXXXXXXXX
+- 🧵 Facebook: [MÂYBÊ NX](https://www.facebook.com/nx210.is.back )
+- 📱 WhatsApp: +8801876118312
 
 ---
 
 ## 📂 GitHub Stats
 
-![Tanjil's GitHub stats](https://github-readme-stats.vercel.app/api?username=your-github-username&show_icons=true&theme=radical)
 
 ---
 
-## 💖 Thanks for Visiting!
-
-Thank you for taking the time to check out my profile!  
-Feel free to reach out if you'd like to connect or collaborate.  
-Stay safe, stay awesome! 😊
+## 💖 Thanks for anu6969,ntkhang,amitmax,gojo999,xnil and my friend siyuu ,
