@@ -1,46 +1,57 @@
+const axios = require("axios");
+const fs = require("fs-extra");
+const path = require("path");
+
 module.exports = {
   config: {
     name: "edit",
-    aliases: [],
-    role: 0,
-    author: "T A N J I L",
+    version: "1.0",
+    author: "RI F AT | NeoKEX",
     countDown: 5,
-    longDescription: "",
-    category: "image",
-    guide: {
-      en: "/edit make this image black white"
-    }
+    role: 0,
+    shortDescription: "Edit image using prompt",
+    longDescription: "Edit an uploaded image based on your prompt.",
+    category: "AI-IMAGE",
+    guide: "{p}edit [prompt] (reply to image)"
   },
-  onStart: async function ({ message, api, args, event }) {
-    if (!event.messageReply || !event.messageReply.attachments || !event.messageReply.attachments[0]) {
-      return message.reply("📸| Please reply to an image to edit it.");
+
+  onStart: async function ({ api, event, args, message }) {
+    const prompt = args.join(" ");
+    const repliedImage = event.messageReply?.attachments?.[0];
+
+    if (!prompt || !repliedImage || repliedImage.type !== "photo") {
+      return message.reply("Please reply to a photo with your prompt to edit it.");
     }
+    
+    api.setMessageReaction("🛠️", event.messageID, () => {}, true);
 
-    if (!args[0]) {
-      return message.reply("📝| Please provide a prompt.");
-    }
+    const imgPath = path.join(__dirname, "cache", `${Date.now()}_edit.jpg`);
 
-    const prompt = encodeURIComponent(args.join(" "));
-    const imgurl = encodeURIComponent(event.messageReply.attachments[0].url);
-    const geditUrl = `https://smfahim.xyz/gedit?prompt=${prompt}&url=${imgurl}`;
+    try {
+      const imgURL = repliedImage.url;
+      const imageUrl = `https://edit-and-gen.onrender.com/gen?prompt=${encodeURIComponent(prompt)}&image=${encodeURIComponent(imgURL)}`;
+      const res = await axios.get(imageUrl, { responseType: "arraybuffer" });
 
-    api.setMessageReaction("⏳", event.messageID, () => {}, true);
+      await fs.ensureDir(path.dirname(imgPath));
+      await fs.writeFile(imgPath, Buffer.from(res.data, "binary"));
 
-    message.reply("🔄| Editing image, please wait...", async (err, info) => {
-      try {
-        const attachment = await global.utils.getStreamFromURL(geditUrl);
-        message.reply({ 
-          body: `✅| Here is your edited image!`, 
-          attachment: attachment 
-        });
+      message.reply({
+        body: `✅ Edited image for: "${prompt}"`,
+        attachment: fs.createReadStream(imgPath)
+      });
+      
+      api.setMessageReaction("✅", event.messageID, () => {}, true);
 
-        let ui = info.messageID;          
-        message.unsend(ui);
-        api.setMessageReaction("✅", event.messageID, () => {}, true);
-      } catch (error) {
-        message.reply("❌| There was an error editing your image.");
-        console.error(error);
+    } catch (err) {
+      console.error("EDIT Error:", err);
+      message.reply("Failed to edit image. Please try again later.");
+      
+      api.setMessageReaction("❌", event.messageID, () => {}, true);
+      
+    } finally {
+      if (fs.existsSync(imgPath)) {
+        await fs.remove(imgPath);
       }
-    });
+    }
   }
 };
