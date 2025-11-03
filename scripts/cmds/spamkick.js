@@ -1,6 +1,6 @@
 let messageCounts = {};
 let spamDetectionEnabled = true;
-const spamThreshold = 10;
+const spamThreshold = 8;
 const spamInterval = 60000;
 
 module.exports = {
