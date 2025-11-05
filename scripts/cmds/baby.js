@@ -79,7 +79,7 @@ module.exports = {
 
       if (prefixes.some((prefix) => messageBody.startsWith(prefix))) {
         setTimeout(() => {
-          api.setMessageReaction("🙈", event.messageID, () => {}, true);
+          api.setMessageReaction("🪶", event.messageID, () => {}, true);
         }, 400);
 
         api.sendTypingIndicator(event.threadID, true);
@@ -143,7 +143,7 @@ module.exports = {
     const reactions = ["haha", "👽", "lol", "pro", "gpt", "🧘‍♂️", "hehe"];
     if (reactions.some(reaction => messageBody.includes(reaction))) {
       setTimeout(() => {
-        api.setMessageReaction("🧠", event.messageID, () => {}, true);
+        api.setMessageReaction("🦆", event.messageID, () => {}, true);
       }, 500);
     }
   }
