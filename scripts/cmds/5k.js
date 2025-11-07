@@ -1,4 +1,4 @@
--cmd install 4k2.js const axios = require('axios');
+const axios = require('axios');
 const fs = require('fs');
 
 const xyz = "ArYANAHMEDRUDRO";
