@@ -559,23 +559,77 @@ module.exports = function (api, threadModel, userModel, dashBoardModel, globalMo
 		 |                   ON REACTION                  |
 		 +------------------------------------------------+
 		*/
-		async function onReaction() {
-			const { onReaction } = GoatBot;
-			const Reaction = onReaction.get(messageID);
-			if (!Reaction)
-				return;
-			Reaction.delete = () => onReaction.delete(messageID);
-			const commandName = Reaction.commandName;
-			if (!commandName) {
-				message.reply(utils.getText({ lang: langCode, head: "handlerEvents" }, "cannotFindCommandName"));
-				return log.err("onReaction", `Can't find command name to execute this reaction!`, Reaction);
-			}
-			const command = GoatBot.commands.get(commandName);
-			if (!command) {
-				message.reply(utils.getText({ lang: langCode, head: "handlerEvents" }, "cannotFindCommand", commandName));
-				return log.err("onReaction", `Command "${commandName}" not found`, Reaction);
-			}
+		/*
+ +------------------------------------------------+
+ |                   ON REACTION                  |
+ +------------------------------------------------+
+*/
+async function onReaction({ event, api, message, utils, langCode, role, isGroup, threadData, log, GoatBot }) {
+  try {
+    const { onReaction } = GoatBot;
+    const messageID = event.messageID;
+    const Reaction = onReaction.get(messageID);
+    if (!Reaction)
+      return;
 
+    Reaction.delete = () => onReaction.delete(messageID);
+    const commandName = Reaction.commandName;
+    if (!commandName) {
+      message.reply(utils.getText({ lang: langCode, head: "handlerEvents" }, "cannotFindCommandName"));
+      return log.err("onReaction", `Can't find command name to execute this reaction!`, Reaction);
+    }
+    const command = GoatBot.commands.get(commandName);
+    if (!command) {
+      message.reply(utils.getText({ lang: langCode, head: "handlerEvents" }, "cannotFindCommand", commandName));
+      return log.err("onReaction", `Command "${commandName}" not found`, Reaction);
+    }
+
+    // —————————————— CHECK PERMISSION —————————————— //
+    const roleConfig = getRoleConfig(utils, command, isGroup, threadData, commandName);
+    const needRole = roleConfig.onReaction;
+    if (needRole > role) {
+      if (!hideNotiMessage.needRoleToUseCmdOnReaction) {
+        if (needRole == 1)
+          return await message.reply(utils.getText({ lang: langCode, head: "handlerEvents" }, "onlyAdminToUseOnReaction", commandName));
+        else if (needRole == 2)
+          return await message.reply(utils.getText({ lang: langCode, head: "handlerEvents" }, "onlyAdminBot2ToUseOnReaction", commandName));
+      } else {
+        return true;
+      }
+    }
+
+    // ====================================================
+    // ✅ Custom part: বটের মেসেজে রিয়্যাক্ট হলে অ্যাকশন
+    // ====================================================
+    try {
+      const botID = api.getCurrentUserID();
+      const threadInfo = await api.getThreadInfo(event.threadID);
+      const adminIDs = threadInfo.adminIDs.map(a => a.id);
+
+      // যদি বটের মেসেজে রিয়্যাক্ট দেওয়া হয়
+      if (event.userID !== botID && event.messageSenderID === botID) {
+        // যদি অ্যাডমিন রিয়্যাক্ট দেয় → মেসেজ unsent
+        if (adminIDs.includes(event.userID)) {
+          await api.unsendMessage(event.messageID);
+          console.log(`🧹 Message unsent by admin's reaction.`);
+        }
+        // অন্য কেউ রিয়্যাক্ট দিলে → 🙂 পাঠাবে
+        else {
+          await api.sendMessage("🙂", event.threadID, event.messageID);
+        }
+      }
+    } catch (err) {
+      console.log("Auto reaction reply/unsend error:", err);
+    }
+    // ====================================================
+
+    // —————————————— RUN REACTION COMMAND —————————————— //
+    if (typeof command.onReaction === "function")
+      await command.onReaction({ event, api, message, Reaction, utils, role, threadData });
+  } catch (err) {
+    console.error("Error in onReaction:", err);
+  }
+}
 			// —————————————— CHECK PERMISSION —————————————— //
 			const roleConfig = getRoleConfig(utils, command, isGroup, threadData, commandName);
 			const needRole = roleConfig.onReaction;
