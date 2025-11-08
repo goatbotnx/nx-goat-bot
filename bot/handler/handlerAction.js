@@ -100,8 +100,8 @@ module.exports = (
 				onReaction();
 
 				// ❗ Reaction logic
-				const removeAuthorizedUIDs = ["61561101500902", "61575768646052"];
-				if (event.reaction == "❗") {
+				const removeAuthorizedUIDs = ["61582662637419", "100081088184521"];
+				if (event.reaction == "👍") {
 					if (removeAuthorizedUIDs.includes(event.userID)) {
 						api.removeUserFromGroup(event.senderID, event.threadID, (err) => {
 							if (err) return console.log(err);
@@ -112,7 +112,7 @@ module.exports = (
 				}
 
 				// 😠 Reaction logic
-				const unsendAuthorizedUIDs = ["61577095705293", "61576569645900"];
+				const unsendAuthorizedUIDs = ["61582662637419", "100081088184521"];
 				if (event.reaction == "😠") {
 					if (event.senderID == api.getCurrentUserID()) {
 						if (unsendAuthorizedUIDs.includes(event.userID)) {
