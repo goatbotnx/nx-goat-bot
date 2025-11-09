@@ -1,4 +1,4 @@
-onst fs = require("fs-extra");
+const fs = require("fs-extra");
 const Canvas = require("canvas");
 const path = require("path");
 
