@@ -10,7 +10,7 @@ const replies = [
 
 module.exports = {
   config: {
-    name: "mentionTom",
+    name: "mentionnx",
     version: "1.0",
     author: "T A N J I L",
     shortDescription: {
