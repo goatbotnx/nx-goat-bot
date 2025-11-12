@@ -13,7 +13,7 @@ module.exports = {
     author: "dipto",
     countDown: 5,
     role: 0,
-    noPrefix: true,
+    noPrefix: false,
     description: {
       en: "Download audio from YouTube"
     },
