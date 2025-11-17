@@ -1,7 +1,7 @@
 {
   "facebookAccount": {
-    "email": "xalman125@gmail.com",
-    "password": "",
+    "email": "xadikasara@gmail.com",
+    "password": "xalmanx214",
     "2FASecret": "",
     "i_user": "",
     "proxy": null,
@@ -76,7 +76,7 @@
   },
 
   "autoRestart": {
-    "time": 180000000,
+    "time": 5000000,
     "notes": "you can set time is interval with milisecond or cron time"
   },
 
