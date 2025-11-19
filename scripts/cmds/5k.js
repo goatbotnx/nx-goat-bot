@@ -11,7 +11,8 @@ module.exports = {
     credits: "cyber bot team (fixed by nx)",
     premium: false,
     description: "Enhance Photo - Image Generator",
-    commandCategory: "Image Editing Tools",
+    
+    category: "image",
     usages: "Reply to an image or provide image URL",
     cooldowns: 5,
     dependencies: {
