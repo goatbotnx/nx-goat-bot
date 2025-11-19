@@ -3,10 +3,11 @@ module.exports = {
         name: "ping",
         aliases: ["pong"],
         version: "1.3",
-        author: "Md Sk",
+        author: "xalman ",
         countDown: 3,
         role: 0,
         shortDescription: "Bot er ping check korar command",
+        cetagory: "system",
     },
 
     onStart: async function ({ message }) {
