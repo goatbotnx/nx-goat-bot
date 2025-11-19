@@ -6,6 +6,7 @@ module.exports = {
     countDown: 3,
     role: 0,
     shortDescription: "emoji → funny audio",
+    category: "fun",
     longDescription: "no prefix emoji reaction with audio",
     category: "no prefix",
   },
