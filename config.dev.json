@@ -76,7 +76,7 @@
   },
 
   "autoRestart": {
-    "time": 5000000,
+    "time": 500000000000,
     "notes": "you can set time is interval with milisecond or cron time"
   },
 
