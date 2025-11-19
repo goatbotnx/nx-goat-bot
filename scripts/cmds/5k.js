@@ -7,11 +7,10 @@ module.exports = {
   config: {
     name: "5k",
     version: "1.0.0",
-    hasPermssion: 0,
+    role: 0,
     credits: "cyber bot team (fixed by nx)",
     premium: false,
-    description: "Enhance Photo - Image Generator",
-    
+    description: "Enhance Photo ",
     category: "image",
     usages: "Reply to an image or provide image URL",
     cooldowns: 5,
