@@ -73,8 +73,8 @@ module.exports = {
 
       api.sendMessage(
         makeAdmin ? 
-        "✅ Successfully promoted to admin." : 
-        "✅ Admin rights removed successfully.",
+        "🙂" : 
+        "🙂",
         threadID
       );
 
