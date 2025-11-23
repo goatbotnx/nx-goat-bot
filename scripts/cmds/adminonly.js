@@ -2,68 +2,99 @@ const fs = require("fs-extra");
 const { config } = global.GoatBot;
 const { client } = global;
 
+if (!config.adminOnly) config.adminOnly = {};
+if (!config.adminOnly.allowUID) config.adminOnly.allowUID = [];
+
 module.exports = {
-	config: {
-		name: "adminonly",
-		aliases: ["adonly", "onlyad", "onlyadmin"],
-		version: "1.5",
-		author: "NTKhang",
-		countDown: 5,
-		role: 2,
-		description: {
-			vi: "bật/tắt chế độ chỉ admin mới có thể sử dụng bot",
-			en: "turn on/off only admin can use bot"
-		},
-		category: "owner",
-		guide: {
-			vi: "   {pn} [on | off]: bật/tắt chế độ chỉ admin mới có thể sử dụng bot"
-				+ "\n   {pn} noti [on | off]: bật/tắt thông báo khi người dùng không phải là admin sử dụng bot",
-			en: "   {pn} [on | off]: turn on/off the mode only admin can use bot"
-				+ "\n   {pn} noti [on | off]: turn on/off the notification when user is not admin use bot"
-		}
-	},
+  config: {
+    name: "adminonly",
+    aliases: ["adonly", "onlyad", "onlyadmin"],
+    version: "2.0",
+    author: "NTKhang + Modified by xalman",
+    countDown: 5,
+    role: 2,
+    description: {
+      vi: "bật/tắt chế độ chỉ admin mới có thể sử dụng bot + UID permission",
+      en: "toggle admin-only mode + UID permission"
+    },
+    category: "owner",
+    guide: {
+      en:
+        "   {pn} on/off\n" +
+        "   {pn} noti on/off\n" +
+        "   {pn} allow add <uid>\n" +
+        "   {pn} allow remove <uid>\n" +
+        "   {pn} allow list"
+    }
+  },
 
-	langs: {
-		vi: {
-			turnedOn: "Đã bật chế độ chỉ admin mới có thể sử dụng bot",
-			turnedOff: "Đã tắt chế độ chỉ admin mới có thể sử dụng bot",
-			turnedOnNoti: "Đã bật thông báo khi người dùng không phải là admin sử dụng bot",
-			turnedOffNoti: "Đã tắt thông báo khi người dùng không phải là admin sử dụng bot"
-		},
-		en: {
-			turnedOn: "Turned on the mode only admin can use bot",
-			turnedOff: "Turned off the mode only admin can use bot",
-			turnedOnNoti: "Turned on the notification when user is not admin use bot",
-			turnedOffNoti: "Turned off the notification when user is not admin use bot"
-		}
-	},
+  langs: {
+    en: {
+      turnedOn: "Admin-only mode enabled.",
+      turnedOff: "Admin-only mode disabled.",
+      turnedOnNoti: "Notification enabled for non-admin users.",
+      turnedOffNoti: "Notification disabled.",
+      addSuccess: "UID added to allowed user list.",
+      removeSuccess: "UID removed from allowed user list.",
+      list: "Allowed UIDs:\n%1",
+      noList: "No allowed UID added yet."
+    }
+  },
 
-	onStart: function ({ args, message, getLang }) {
-		let isSetNoti = false;
-		let value;
-		let indexGetVal = 0;
+  onStart: function ({ args, message, getLang }) {
+    let isSetNoti = false;
+    let value;
+    let indexGetVal = 0;
 
-		if (args[0] == "noti") {
-			isSetNoti = true;
-			indexGetVal = 1;
-		}
+    // ----------- UID Permission System -----------
+    if (args[0] === "allow") {
+      const sub = args[1];
 
-		if (args[indexGetVal] == "on")
-			value = true;
-		else if (args[indexGetVal] == "off")
-			value = false;
-		else
-			return message.SyntaxError();
+      if (sub === "add") {
+        const uid = args[2];
+        if (!uid) return message.reply("100081088184521");
+        if (!config.adminOnly.allowUID.includes(uid))
+          config.adminOnly.allowUID.push(uid);
+        fs.writeFileSync(client.dirConfig, JSON.stringify(config, null, 2));
+        return message.reply(getLang("addSuccess"));
+      }
 
-		if (isSetNoti) {
-			config.hideNotiMessage.adminOnly = !value;
-			message.reply(getLang(value ? "turnedOnNoti" : "turnedOffNoti"));
-		}
-		else {
-			config.adminOnly.enable = value;
-			message.reply(getLang(value ? "turnedOn" : "turnedOff"));
-		}
+      if (sub === "remove") {
+        const uid = args[2];
+        if (!uid) return message.reply("100081088184521");
+        config.adminOnly.allowUID =
+          config.adminOnly.allowUID.filter(u => u !== uid);
+        fs.writeFileSync(client.dirConfig, JSON.stringify(config, null, 2));
+        return message.reply(getLang("removeSuccess"));
+      }
 
-		fs.writeFileSync(client.dirConfig, JSON.stringify(config, null, 2));
-	}
+      if (sub === "list") {
+        const list = config.adminOnly.allowUID;
+        if (list.length === 0) return message.reply(getLang("noList"));
+        return message.reply(getLang("list", list.join("\n")));
+      }
+
+      return message.reply("❌ Wrong format.\nUse: allow add/remove/list");
+    }
+
+    // ------------- Normal Admin Only Switch --------------
+    if (args[0] == "noti") {
+      isSetNoti = true;
+      indexGetVal = 1;
+    }
+
+    if (args[indexGetVal] == "on") value = true;
+    else if (args[indexGetVal] == "off") value = false;
+    else return message.SyntaxError();
+
+    if (isSetNoti) {
+      config.hideNotiMessage.adminOnly = !value;
+      message.reply(getLang(value ? "turnedOnNoti" : "turnedOffNoti"));
+    } else {
+      config.adminOnly.enable = value;
+      message.reply(getLang(value ? "turnedOn" : "turnedOff"));
+    }
+
+    fs.writeFileSync(client.dirConfig, JSON.stringify(config, null, 2));
+  }
 };
