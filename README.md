@@ -24,4 +24,4 @@
 ---
 ---
 
-## 💖 Thanks for anu6969,ntkhang,amitmax,gojo999,xnil and my friend siyuu🫶 ,
+## 💖 Thanks everyone,
